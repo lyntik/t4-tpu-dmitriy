@@ -5,6 +5,7 @@
 #include "t4.h"
 #include "t4/IPyThread.h"
 #include "StringConstants.h"
+#include "BGTaskProgressDialog.h"
 
 #include "geo/LevelWidget.h"
 #include "MathFuncs.h"
@@ -25,6 +26,7 @@
 #include <QThread>
 #include <QCoreApplication>
 #include <QEventLoop>
+
 
 namespace {
 
@@ -195,6 +197,8 @@ DenoiseWidget::DenoiseWidget(Ui::DenoiseControlPanel* ctrlPanel, IApplicationDat
 
     ctrlPanel_->denoiseControl->setEnabled(true);
     init();
+
+    connect(this, &DenoiseWidget::setData_s, this, &DenoiseWidget::setData);
 }
 
 DenoiseWidget::~DenoiseWidget()
@@ -369,6 +373,13 @@ void DenoiseWidget::testSlice()
 
     const QString args = buildPythonArgs(ui_->YSlider->value(), pathArgForPython(outDir), QString());
     const QString cmd = buildInterpreterCommand(args);
+
+    ExecBGTaskProgressDialog(this, tr("Тестирование"),
+        [&]() { QString script = QSettings().value(PTHGroupLine + PTHPythonSystemPath).toString() + "/analytics/autodenoise/denoise.py";
+                appData_->pyThread()->executeInterpreter(script + "|" + args, true); }
+    );
+    return;
+
     const QString probePath = wrapperProbePath(scriptsRoot);
     const QDateTime probeBefore = QFileInfo(probePath).exists() ? QFileInfo(probePath).lastModified() : QDateTime();
     const bool cudaRequested =

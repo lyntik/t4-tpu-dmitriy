@@ -31,7 +31,7 @@ void AutoDenoiseTool::init(IApplicationData* appData)
 void AutoDenoiseTool::setData(SharedImageDataType img)
 {
     if (widget_)
-        widget_->setHostImage(img);
+        widget_->setData_s(img);
 }
 
 QPushButton* AutoDenoiseTool::activateButton()

@@ -22,6 +22,9 @@ public:
 
     void setHostImage(SharedImageDataType img);
 
+Q_SIGNALS:
+    void setData_s(SharedImageDataType img);
+
 protected:
     IApplicationData* appData_ = nullptr;
 

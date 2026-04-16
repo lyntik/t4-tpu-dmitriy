@@ -1,13 +1,13 @@
-"""
-Денойзинг томографии SwinIR (VolumeOperationTool.AutoDenoiseModule).
+#"""
+#Денойзинг томографии SwinIR (VolumeOperationTool.AutoDenoiseModule).
 
-Важно: инструмент "2D фильтрация" с режимом ИИ использует analytics/filtration.py и
-внутренний WrapFilter - это другой код, не этот файл. Сообщения вида script!...denoise.py
-в консоли часто означают только регистрацию пути модуля; реальное выполнение - кнопки
-"Срез" / "Старт" в панели AutoDenoise (executeInterpreter).
+#Важно: инструмент "2D фильтрация" с режимом ИИ использует analytics/filtration.py и
+#внутренний WrapFilter - это другой код, не этот файл. Сообщения вида script!...denoise.py
+#в консоли часто означают только регистрацию пути модуля; реальное выполнение - кнопки
+#"Срез" / "Старт" в панели AutoDenoise (executeInterpreter).
 
-Формат вызова как у filtration.py: строка после "|" и глобальные sliceNumber, filterParams, filtpath.
-"""
+#Формат вызова как у filtration.py: строка после "|" и глобальные sliceNumber, filterParams, filtpath.
+#"""
 import os
 import sys
 
@@ -76,7 +76,7 @@ _append_trace('LOAD __name__=%r argv=%r cwd=%r\n' % (_nm, sys.argv, os.getcwd())
 
 
 def _host_injected_filtration_globals() -> bool:
-    """Tomograph4 часто подставляет sliceNumber/filterParams в namespace exec, не заполняя sys.argv."""
+#    """Tomograph4 часто подставляет sliceNumber/filterParams в namespace exec, не заполняя sys.argv."""
     g = globals()
     for key in ('sliceNumber', 'filterParams', 'filtpath'):
         if key in g:
@@ -85,7 +85,7 @@ def _host_injected_filtration_globals() -> bool:
 
 
 def _should_run_entry() -> bool:
-    """Реальный сценарий denoise - не "голый" import пакета без контекста тома."""
+#    """Реальный сценарий denoise - не "голый" import пакета без контекста тома."""
     n = globals().get('__name__', '')
     if n == '__main__':
         return True
@@ -165,6 +165,7 @@ def param_line_from_argv() -> str:
 
 
 def resolve_model_path(model_file: str) -> Path:
+    return Path(appDirectory) / 'ai-models' / 'denoise' / model_file
     mf = Path(model_file)
     if mf.is_absolute() and mf.exists():
         return mf
@@ -279,7 +280,7 @@ def tile_process(
 
 
 def _get_t4_api():
-    """В режиме executeInterpreter t4 может быть только глобалом, без importable модуля."""
+#    """В режиме executeInterpreter t4 может быть только глобалом, без importable модуля."""
     try:
         import t4 as t4m  # type: ignore
         return t4m
@@ -441,7 +442,7 @@ def process_volume(params: dict) -> None:
 
 def main() -> None:
     _append_trace('MAIN_START argv=%r\n' % (sys.argv,))
-    _debug_log('denoise.py: main(), загрузка torch/cv2/t4\n')
+    _debug_log('denoise.py: main(), loading torch/cv2/t4\n')
 
     try:
         import cv2  # noqa: F401
@@ -457,7 +458,7 @@ def main() -> None:
             pass
         raise
 
-    _debug_log('denoise.py: импорты OK, перед volumeSource()\n')
+    _debug_log('denoise.py: import OK, before volumeSource()\n')
 
     try:
         vol_src = _get_t4_api().volumeSource()
@@ -466,7 +467,7 @@ def main() -> None:
         raise
 
     if not vol_src.isLoaded():
-        _debug_log('volume not loaded - выход без sys.exit (встроенный интерпретатор)\n')
+        _debug_log('volume not loaded - exit without sys.exit (embedded interpreter)\n')
         print('volume is not loaded')
         return
 
@@ -527,7 +528,7 @@ def main() -> None:
         elif sn == -1:
             process_volume(params)
         else:
-            print('[denoise] Не удалось определить sliceNumber (нет в argv и нет глобальной sliceNumber).')
+            print('[denoise] sliceNumber param is not defined.')
     except Exception:
         traceback.print_exc()
         _debug_log(_log + '\n' + traceback.format_exc())

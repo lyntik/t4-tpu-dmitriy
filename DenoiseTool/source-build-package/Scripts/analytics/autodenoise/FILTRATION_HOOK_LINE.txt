@@ -1,6 +1,6 @@
 Вставьте эту строку в самое начало файла Scripts/analytics/filtration.py:
 
-exec(compile(open(r'C:/t4vis/Scripts/analytics/autodenoise/filtration_autodenoise_hook.py', encoding='utf-8').read(), 'filtration_autodenoise_hook.py', 'exec'), globals())
+exec(compile(open(pyScriptDirectory+'/analytics/autodenoise/filtration_autodenoise_hook.py', encoding='utf-8').read(), 'filtration_autodenoise_hook.py', 'exec'), globals())
 
 Примечание:
 - Это опционально и требуется только для fallback-сценария.
